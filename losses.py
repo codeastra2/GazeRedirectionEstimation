@@ -1,35 +1,9 @@
-import torch.nn as nn
+# FIle usesd for computing Gaze Estimation angular loss.
+# Source: https://github.com/zhengyuf/STED-gaze/blob/master/losses.py
+
 import torch
 import torch.nn.functional as F
 import numpy as np
-import torch.autograd as autograd
-
-
-def discriminator_loss(real, fake):
-    GANLoss = nn.BCEWithLogitsLoss(reduction='mean')
-    real_size = list(real.size())
-    fake_size = list(fake.size())
-    device = real.get_device()
-    real_label = torch.zeros(real_size, dtype=torch.float32).to(device)
-    fake_label = torch.ones(fake_size, dtype=torch.float32).to(device)
-
-    discriminator_loss = (GANLoss(fake, fake_label) + GANLoss(real, real_label)) / 2
-
-    return discriminator_loss
-
-
-def generator_loss(fake):
-    GANLoss = nn.BCEWithLogitsLoss(reduction='mean')
-    fake_size = list(fake.size())
-    device = fake.get_device()
-    fake_label = torch.zeros(fake_size, dtype=torch.float32).to(device)
-    return GANLoss(fake, fake_label)
-
-
-def reconstruction_l1_loss(x, x_hat):
-    loss_fn = nn.L1Loss(reduction='mean')
-    return loss_fn(x.detach(), x_hat)
-
 
 def nn_angular_distance(a, b):
     sim = F.cosine_similarity(a, b, eps=1e-6)
@@ -48,5 +22,6 @@ def gaze_angular_loss(y, y_hat):
     y_hat = pitchyaw_to_vector(y_hat)
     loss = nn_angular_distance(y, y_hat)
 
-    #TODO : Reset this back to mean! 
+    # Here we do not compute the mean as it would be better to have 
+    # all the values and do the required manipulation at a later stage.  
     return loss

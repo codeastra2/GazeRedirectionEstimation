@@ -1,3 +1,6 @@
+# Model used for doing gaze estimation.
+# Source: https://github.com/zhengyuf/STED-gaze/blob/master/models/gazeheadResnet.py
+
 import torch.nn as nn
 import torch
 from torchvision import models
